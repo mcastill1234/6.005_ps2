@@ -27,6 +27,8 @@ public class ConcreteEdgesGraph implements Graph<String> {
     //   TODO
     
     // TODO constructor
+
+    public ConcreteEdgesGraph() {}
     
     // TODO checkRep
     
@@ -43,7 +45,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
     }
     
     @Override public Set<String> vertices() {
-        throw new RuntimeException("not implemented");
+        return this.vertices; // Watch out, rep exposur
     }
     
     @Override public Map<String, Integer> sources(String target) {
