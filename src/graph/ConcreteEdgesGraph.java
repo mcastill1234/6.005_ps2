@@ -20,11 +20,12 @@ public class ConcreteEdgesGraph implements Graph<String> {
     private final List<Edge> edges = new ArrayList<>();
     
     // Abstraction function:
-    //   TODO
+    //   Represents a mutable weighted directed graph with labeled vertices
     // Representation invariant:
-    //   TODO
+    //   Edges are not duplicate
+    //   Weights are positive integers
     // Safety from rep exposure:
-    //   TODO
+    //   Fields are declared private final and observers return copies of the mutable Graph
     
     // TODO constructor
 
@@ -33,7 +34,12 @@ public class ConcreteEdgesGraph implements Graph<String> {
     // TODO checkRep
     
     @Override public boolean add(String vertex) {
-        throw new RuntimeException("not implemented");
+        boolean result = false;
+        if (!vertices.contains(vertex)) {
+            vertices.add(vertex);
+            result = true;
+        }
+        return result;
     }
     
     @Override public int set(String source, String target, int weight) {
@@ -45,7 +51,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
     }
     
     @Override public Set<String> vertices() {
-        return this.vertices; // Watch out, rep exposur
+        return new HashSet<>(vertices);
     }
     
     @Override public Map<String, Integer> sources(String target) {
