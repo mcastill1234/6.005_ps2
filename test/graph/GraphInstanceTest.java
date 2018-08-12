@@ -24,7 +24,7 @@ public abstract class GraphInstanceTest {
      *   true/false if added new/existing vertex
      *   test for graph sizes: 0, n
      * set():
-     *   source is in target: yes, no
+     *   source equal target: yes, no
      *   source is in graph: yes, no
      *   target is in graph: yes, no
      *   weight: 0, 1, n
@@ -70,7 +70,6 @@ public abstract class GraphInstanceTest {
     
     @Test
     public void testInitialVerticesEmpty() {
-        // TODO you may use, change, or remove this test
         assertEquals("expected new graph to have no vertices",
                 Collections.emptySet(), emptyInstance().vertices());
     }
@@ -113,9 +112,9 @@ public abstract class GraphInstanceTest {
      * Tests for set() method
      */
 
-    // Add weighted directed (WD) edge to empty graph, test 0 return and vertices/edge added.
+    // Test set weighted directed (WD) edge in empty graph.
     @Test
-    public void testAddEdgeEmptyGraph() {
+    public void testSetEdgeEmptyGraph() {
         Graph<String> testGraph = emptyInstance();
         int previousWeight = testGraph.set(vertex1, vertex2, weight1);
         assertEquals(0, previousWeight);
@@ -123,6 +122,67 @@ public abstract class GraphInstanceTest {
         assertEquals(2, testGraph.vertices().size());
     }
 
+    // Test set new WD edge and vertex to non empty graph, existing target.
+    @Test
+    public void testSetEdgeWithNewSource() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex2);
+        int previousWeight = testGraph.set(vertex1, vertex2, weight2);
+        assertEquals(0, previousWeight);
+        assertTrue(testGraph.targets(vertex1).get(vertex2) == weight2);
+    }
+
+    // Test set new WD edge with 0 weight. No edge/vertex should be added.
+    @Test
+    public void testSetEdgeNewTargetWeight0() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        int previousWeight = testGraph.set(vertex1, vertex2, weight0);
+        assertEquals(0, previousWeight);
+        assertFalse(testGraph.vertices().contains(vertex2));
+        assertEquals(1, testGraph.vertices().size());
+    }
+
+    // Test set WD edge to same existing vertex, source = target.
+    @Test
+    public void testSetEdgeSourceEqualTarget() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        int previousWeight = testGraph.set(vertex1, vertex1, weight1);
+        assertEquals(0, previousWeight);
+        assertTrue(testGraph.targets(vertex1).get(vertex1) == weight1);
+        assertEquals(1, testGraph.vertices().size());
+    }
+
+    // Test set existing WD edge weight to a new value.
+    @Test
+    public void testSetEdgeModifier() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.add(vertex2);
+        testGraph.set(vertex1, vertex2, weight1);
+        int previousWeight = testGraph.set(vertex1, vertex2, weight2);
+        assertEquals(weight1 = previousWeight);
+        assertTrue(testGraph.targets(vertex1).get(vertex2) == weight2);
+        assertEquals(2, testGraph.vertices().size());
+    }
+
+    // test set existing WD edge weight to 0 deleting the edge.
+    @Test
+    public void testSetEdgeDelete() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.add(vertex2);
+        testGraph.set(vertex1, vertex2, weight1);
+        int previousWeight = testGraph.set(vertex1, vertex2, weight0);
+        assertEquals(weight1, previousWeight);
+        assertFalse(testGraph.targets(vertex1).containsKey(vertex2));
+        assertEquals(2, testGraph.vertices().size());
+    }
+
+    /**
+     * Tests for remove() method
+     */
 
 
 
