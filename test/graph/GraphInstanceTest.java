@@ -1,11 +1,14 @@
 /* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
  * Redistribution of original or derived work requires permission of course staff.
+ * Solution based in Dmytro Shaban... thanks.
  */
+
 package graph;
 
 import static org.junit.Assert.*;
 import java.util.*;
 import org.junit.Test;
+
 
 /**
  * Tests for instance methods of Graph.
@@ -21,29 +24,35 @@ public abstract class GraphInstanceTest {
      * Testing strategy for each operation of Graph:
      *
      * add():
-     *   true/false if added new/existing vertex
-     *   test for graph sizes: 0, n
+     *   returns true/false if added new/existing vertex
+     *   modifies Graph by adding vertex: test on different Graph sizes, 0, n.
      * set():
-     *   source equal target: yes, no
-     *   source is in graph: yes, no
-     *   target is in graph: yes, no
-     *   weight: 0, 1, n
-     *   source and target was connected: yes, no
-     *   initial graph size: 0, 1, n
+     *   returns previous edge weight: 0, n > 0, n < 0?
+     *   modifies Graph by changing the value of edge between source and target to weight. Cases:
+     *      1. Source is in Graph?
+     *      2. Target is in Graph?
+     *      3. Source equal target?
+     *      4. Weight: 0, 1, n, negative?
+     *      5. Source and Target was connected?
+     *      6. Test on different Graph sizes
      * remove():
-     *   graph had this vertex : yes, no
-     *   -- might need edge verification.
-     *   test for graph sizes : 0, 1, n
+     *   returns true/false if removed vertex
+     *   modifies Graph by removing a vertex, there are two cases:
+     *       1. removing a vertex with incoming edges
+     *       2. removing a vertex with outgoing edges
      * sources():
-     *   target vertex is in graph: yes, no
-     *   source vertexes number: 0, 1, n
-     *   initial graph size: 0, 1, n
+     *   returns a map with vertices as keys and weights as values. Cases:
+     *      1. Target is in graph?
+     *      2. Test multiple sources: 1, n
+     *      3. Test different Graph sizes: 0, 1, n
      * targets():
-     *   source vertex is in graph: yes, no
-     *   target vertexes number: 0, 1, n
-     *   graph size: 0, 1, n
+     *   returns a map with vertices as keys and weights as values. Cases:
+     *      1. Source is in graph?
+     *      2. Test multiple targets: 0, 1, n
+     *      3. Test different Graph sizes : 0, 1, n
      * vertices():
-     *   graph size: 0,1, n
+     *   returns a set of all vertices in Graph
+     *   Test different graph sizes: 0,1, n
      */
 
     private static final String vertex1 = "V1";
@@ -68,18 +77,14 @@ public abstract class GraphInstanceTest {
         assert false; // make sure assertions are enabled with VM argument: -ea
     }
     
-    @Test
-    public void testInitialVerticesEmpty() {
-        assertEquals("expected new graph to have no vertices",
-                Collections.emptySet(), emptyInstance().vertices());
-    }
+
 
 
     /**
      * Tests for add() method
      */
 
-    // Add new vertex to empty graph, test true return.
+    // Covers:  add new vertex in Graph size = 0.
     @Test
     public void testAddNewVertexEmptyGraph() {
         Graph<String> testGraph = emptyInstance();
@@ -87,7 +92,7 @@ public abstract class GraphInstanceTest {
         assertTrue(testGraph.vertices().contains(vertex1));
     }
 
-    // Add n vertices to a graph, test true return.
+    // Covers:  add new vertex in Graph size = n.
     @Test
     public void testAddVertexesToEmptyGraph() {
         Graph<String> testGraph = emptyInstance();
@@ -99,7 +104,7 @@ public abstract class GraphInstanceTest {
         assertTrue(testGraph.vertices().contains(vertex3));
     }
 
-    // Add existing vertex to graph, test false return.
+    // Covers:  add existing vertex in Graph size = 1.
     @Test
     public void testAddExistingVertexToGraph() {
         Graph<String> testGraph = emptyInstance();
@@ -112,7 +117,8 @@ public abstract class GraphInstanceTest {
      * Tests for set() method
      */
 
-    // Test set weighted directed (WD) edge in empty graph.
+    // Covers:  source not equal target, source and target not in graph,
+    //          Graph size = 0, weight =1, source and target were not connected.
     @Test
     public void testSetEdgeEmptyGraph() {
         Graph<String> testGraph = emptyInstance();
@@ -122,7 +128,8 @@ public abstract class GraphInstanceTest {
         assertEquals(2, testGraph.vertices().size());
     }
 
-    // Test set new WD edge and vertex to non empty graph, existing target.
+    // Covers:  source not in Graph, target is in Graph, source not equal target,
+    //          Graph size = 1, weight = 2, source and target were not connected.
     @Test
     public void testSetEdgeWithNewSource() {
         Graph<String> testGraph = emptyInstance();
@@ -132,7 +139,8 @@ public abstract class GraphInstanceTest {
         assertTrue(testGraph.targets(vertex1).get(vertex2) == weight2);
     }
 
-    // Test set new WD edge with 0 weight. No edge/vertex should be added.
+    // Covers:  source is in Graph, target not in Graph, source not equal target,
+    //          Graph size = 1, weight = 0, source and target were not connected.
     @Test
     public void testSetEdgeNewTargetWeight0() {
         Graph<String> testGraph = emptyInstance();
@@ -143,7 +151,8 @@ public abstract class GraphInstanceTest {
         assertEquals(1, testGraph.vertices().size());
     }
 
-    // Test set WD edge to same existing vertex, source = target.
+    // Covers:  source and target are in Graph, source equals targets,
+    //          Graph size = 1, weight = 0, source and target were not connected.
     @Test
     public void testSetEdgeSourceEqualTarget() {
         Graph<String> testGraph = emptyInstance();
@@ -154,7 +163,8 @@ public abstract class GraphInstanceTest {
         assertEquals(1, testGraph.vertices().size());
     }
 
-    // Test set existing WD edge weight to a new value.
+    // Covers:  source and target are in Graph, source not equal target,
+    //          Graph size = 2, weight = 2, source and target were connected.
     @Test
     public void testSetEdgeModifier() {
         Graph<String> testGraph = emptyInstance();
@@ -162,12 +172,13 @@ public abstract class GraphInstanceTest {
         testGraph.add(vertex2);
         testGraph.set(vertex1, vertex2, weight1);
         int previousWeight = testGraph.set(vertex1, vertex2, weight2);
-        assertEquals(weight1 = previousWeight);
+        assertEquals(weight1, previousWeight);
         assertTrue(testGraph.targets(vertex1).get(vertex2) == weight2);
         assertEquals(2, testGraph.vertices().size());
     }
 
-    // test set existing WD edge weight to 0 deleting the edge.
+    // Covers:  source and target are in Graph, source not equal target,
+    //          Graph size = 2, weight = 0, source and target were connected.
     @Test
     public void testSetEdgeDelete() {
         Graph<String> testGraph = emptyInstance();
@@ -184,6 +195,159 @@ public abstract class GraphInstanceTest {
      * Tests for remove() method
      */
 
+    // Covers:  remove existing vertex in Graph with incoming edges
+    @Test
+    public void testRemoveVertexWithIncEdge() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.set(vertex2, vertex1, weight1);
+        Map<String, Integer> edges = testGraph.sources(vertex1);
+        boolean isRemoved = testGraph.remove(vertex1);
+        for (String vertex : edges.keySet()) {
+            assertFalse(testGraph.targets(vertex).containsKey(vertex1));
+        }
+        assertFalse(testGraph.vertices().contains(vertex1));
+        assertTrue(isRemoved);
+    }
 
+    // Covers:  remove existing vertex in Graph with outgoing edges
+    @Test
+    public void testRemoveVertexWithOutEdge() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.set(vertex1, vertex2, weight1);
+        Map<String, Integer> edges = testGraph.targets(vertex1);
+        boolean isRemoved = testGraph.remove(vertex1);
+        for (String vertex : edges.keySet()) {
+            assertFalse(testGraph.sources(vertex).containsKey(vertex1));
+        }
+        assertFalse(testGraph.vertices().contains(vertex1));
+        assertTrue(isRemoved);
+    }
+
+    // Covers:  remove vertex not in Graph
+    @Test
+    public void testRemoveVertexEmptyGraph() {
+        Graph<String> testGraph = emptyInstance();
+        Set<String> verticesBefore = testGraph.vertices();
+        boolean isRemoved = testGraph.remove(vertex1);
+        assertTrue(verticesBefore.containsAll(testGraph.vertices()));
+        assertEquals(verticesBefore.size(), testGraph.vertices().size());
+        assertFalse(isRemoved);
+    }
+
+    /**
+     * Tests for source() method
+     */
+
+    // Covers:  vertex not in Graph size = 0. Source vertices = 0.
+    @Test
+    public void testSourcesEmptyGraph() {
+        Graph<String> testGraph = emptyInstance();
+        Map<String, Integer> sources = testGraph.sources(vertex1);
+        assertEquals(Collections.emptyMap(), sources);
+    }
+
+    // Covers:  vertex is in Graph size = 1. Source vertices = 1.
+    @Test
+    public void testSourcesOneSource() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.set(vertex1, vertex1, weight1); // self loops allowed...
+        Map<String, Integer> sources = testGraph.sources(vertex1);
+        assertEquals(1, sources.size());
+        assertTrue(sources.get(vertex1) == weight1);
+    }
+
+    // Covers:  vertex is in Graph size = n. Source vertices = 3.
+    @Test
+    public void testSourcesManySoources() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.add(vertex2);
+        testGraph.add(vertex3);
+        testGraph.add(vertex4);
+        testGraph.set(vertex2, vertex1, weight1);
+        testGraph.set(vertex3, vertex1, weight2);
+        testGraph.set(vertex4, vertex1, weight1);
+        Map<String, Integer> sources = testGraph.sources(vertex1);
+        assertEquals(3, sources.size());
+        assertTrue(sources.get(vertex2) == weight1);
+        assertTrue(sources.get(vertex3) == weight2);
+        assertTrue(sources.get(vertex4) == weight1);
+    }
+
+    /**
+     * Tests for target() method
+     */
+
+    // Covers:  vertex not in Graph size = 0. Target vertices = 0.
+    @Test
+    public void testTargetsEmptyGraph() {
+        Graph<String> testGraph = emptyInstance();
+        Map<String, Integer> targets = testGraph.targets(vertex1);
+        assertEquals(Collections.emptyMap(), targets);
+    }
+
+    // Covers:  vertex is in Graph size = 1. Target vertices = 1.
+    @Test
+    public void testTargetsOneTarget() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.set(vertex1, vertex1, weight1);
+        Map<String, Integer> targets = testGraph.targets(vertex1);
+        assertEquals(1, targets.size());
+        assertTrue(targets.get(vertex1) == weight1);
+    }
+
+    // Covers:  vertex is in Graph size = n. Target vertices = 3.
+    @Test
+    public void testTargetsManyTargets() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.add(vertex2);
+        testGraph.add(vertex3);
+        testGraph.add(vertex4);
+        testGraph.set(vertex1, vertex2, weight1);
+        testGraph.set(vertex1, vertex3, weight2);
+        testGraph.set(vertex1, vertex4, weight1);
+        Map<String, Integer> targets = testGraph.targets(vertex1);
+        assertEquals(3, targets.size());
+        assertTrue(targets.get(vertex2) == weight1);
+        assertTrue(targets.get(vertex3) == weight2);
+        assertTrue(targets.get(vertex4) == weight1);
+    }
+
+    /**
+     * Tests for vertices() method
+     */
+
+    // Covers:  Graph size = 0.
+    @Test
+    public void testInitialVerticesEmpty() {
+        assertEquals("expected new graph to have no vertices",
+                Collections.emptySet(), emptyInstance().vertices());
+    }
+
+    // Covers:  Graph size = 1.
+    @Test
+    public void testVerticesOneVertex() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        Set<String> vertices = testGraph.vertices();
+        assertEquals(1, vertices.size());
+        assertTrue(vertices.contains(vertex1));
+    }
+
+    // Covers:  Graph size = n.
+    @Test
+    public void testVerticesManyVertices() {
+        Graph<String> testGraph = emptyInstance();
+        testGraph.add(vertex1);
+        testGraph.add(vertex2);
+        testGraph.add(vertex3);
+        Set<String> vertices = testGraph.vertices();
+        Set<String> modelVertises = new HashSet<>(Arrays.asList(vertex1, vertex2, vertex3));
+        assertTrue(vertices.containsAll(modelVertises));
+        assertEquals(3, vertices.size());
+    }
 
 }
