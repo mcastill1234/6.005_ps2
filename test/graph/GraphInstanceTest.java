@@ -1,6 +1,7 @@
 /* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
  * Redistribution of original or derived work requires permission of course staff.
- * Solution based in Dmytro Shaban... thanks.
+ * Test cases based in Dmytro Shaban... thanks.
+ *
  */
 
 package graph;
@@ -235,7 +236,7 @@ public abstract class GraphInstanceTest {
     }
 
     /**
-     * Tests for source() method
+     * Tests for sources() method
      */
 
     // Covers:  vertex not in Graph size = 0. Source vertices = 0.
@@ -276,7 +277,7 @@ public abstract class GraphInstanceTest {
     }
 
     /**
-     * Tests for target() method
+     * Tests for targets() method
      */
 
     // Covers:  vertex not in Graph size = 0. Target vertices = 0.

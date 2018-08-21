@@ -1,13 +1,14 @@
 /* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
  * Redistribution of original or derived work requires permission of course staff.
+ * This implementation of Graph is based on  Dmytro Shaban solution with some changes. I'm fairly new to
+ * java so I'm trying out an easier program for checkRep which is much more complex than using a sorted list.
+ * I also propose set() without exceptions for notFound edge and some variations in the code.
  */
 package graph;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+
 
 /**
  * An implementation of Graph.
@@ -23,15 +24,45 @@ public class ConcreteEdgesGraph implements Graph<String> {
     //   Represents a mutable weighted directed graph with labeled vertices
     // Representation invariant:
     //   Edges are not duplicate
-    //   Weights are positive integers
     // Safety from rep exposure:
     //   Fields are declared private final and observers return copies of the mutable Graph
     
-    // TODO constructor
+    // Check rep invariant
+    private void checkRep() {
+        assert(this.isEdgeNotDuplicate());
+        assert(this.isVerticesNotNull());
+    }
 
-    public ConcreteEdgesGraph() {}
-    
-    // TODO checkRep
+
+    /**
+     * Check that edges are not duplicate
+     * Using nested loops - O(n^2)
+     * @return true if edges are not duplicate
+     */
+    private boolean isEdgeNotDuplicate() {
+        if (edges.size() > 1) {
+            for (int i=0; i<edges.size(); i++) {
+                for (int j=0; j<edges.size(); i++) {
+                    if (i != j && edges.get(i).getSource() == edges.get(j).getSource() &&
+                            edges.get(i).getTarget() == edges.get(j).getTarget()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check that vertices are not null
+     * @return true if all vertices are not null
+     */
+    private boolean isVerticesNotNull() {
+        for (String vertex : vertices) {
+            if (vertex == null) { return false;}
+        }
+        return true;
+    }
     
     @Override public boolean add(String vertex) {
         boolean result = false;
@@ -39,58 +70,236 @@ public class ConcreteEdgesGraph implements Graph<String> {
             vertices.add(vertex);
             result = true;
         }
+        checkRep();
         return result;
     }
     
     @Override public int set(String source, String target, int weight) {
-        throw new RuntimeException("not implemented");
+        if (weight == 0) {
+            if (isEdgeInGraph(source, target)) {
+                Edge edgeToSet = findEdge(source, target);
+                int result = edgeToSet.getWeight();
+                edges.remove(edgeToSet);
+                checkRep();
+                return result;
+            }
+            else {
+                checkRep();
+                return 0;
+            }
+        }
+        else {
+            if (isEdgeInGraph(source, target)) {
+                Edge edgeToSet = findEdge(source, target);
+                int result = edgeToSet.getWeight();
+                edges.remove(edgeToSet);
+                edges.add(new Edge(source, target, weight));
+                checkRep();
+                return result;
+            }
+            else {
+                add(source);
+                add(target);
+                edges.add(new Edge(source, target, weight));
+                checkRep();
+                return 0;
+            }
+        }
     }
-    
+
+    /**
+     * Check if edge is in list of edges
+     * @param source source vertex
+     * @param target target vertex
+     * @return true if edge is in list of edges, false otherwise
+     */
+    private boolean isEdgeInGraph(String source, String target) {
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(source) && edge.getTarget().equals(target)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Find an edge in list of edges given source and target vertices
+     * @param source source of edge
+     * @param target target of edge
+     * @return edge if it's in list of edges, empty edge if it isn't
+     */
+    private Edge findEdge(String source, String target) {
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(source) && edge.getTarget().equals(target)) {
+                return edge;
+            }
+        }
+        return new Edge("", "", 0);
+    }
+
     @Override public boolean remove(String vertex) {
-        throw new RuntimeException("not implemented");
+        boolean result = false;
+        if (vertices.contains(vertex)) {
+            vertices.remove(vertex);
+            List<Edge> edgesForRemove = findEdgesBySource(vertex);
+            edgesForRemove.addAll(findEdgesByTarget(vertex));
+            edges.removeAll(edgesForRemove);
+            result = true;
+        }
+        checkRep();
+        return result;
+    }
+
+
+    /**
+     * Search edges with given source in list of edges
+     * @param source source of edges
+     * @return list of found edges
+     */
+    private List<Edge> findEdgesBySource(String source) {
+        List<Edge> result = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(source)) {
+                result.add(edge);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Search edges with give target in list of edges
+     * @param target target of edges
+     * @return list of found edges
+     */
+    private List<Edge> findEdgesByTarget(String target) {
+        List<Edge> result = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (edge.getTarget().equals(target)) {
+                result.add(edge);
+            }
+        }
+        return result;
     }
     
     @Override public Set<String> vertices() {
+        checkRep();
         return new HashSet<>(vertices);
     }
     
     @Override public Map<String, Integer> sources(String target) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> result = new HashMap<>();
+        for (Edge edge : edges) {
+            if (edge.getTarget().equals(target)) {
+                result.put(edge.getSource(), edge.getWeight());
+            }
+        }
+        return result;
     }
     
     @Override public Map<String, Integer> targets(String source) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> result = new HashMap<>();
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(source)) {
+                result.put(edge.getTarget(), edge.getWeight());
+            }
+        }
+        return result;
     }
     
-    // TODO toString()
+    @Override public String toString() {
+        return "Graph contains " + vertices.size() + " vertices and " + edges.size() + " edges";
+    }
     
 }
 
 /**
- * TODO specification
  * Immutable.
  * This class is internal to the rep of ConcreteEdgesGraph.
- * 
- * <p>PS2 instructions: the specification and implementation of this class is
- * up to you.
+ * Each edge has a source vertex and a target vertex.
+ * Both vertices must have the same immutable type.
+ * Edges are directed, they point from source to target.
+ * Each edge has a positive weight of type int.
+ * The vertices of an edge don't necessarily have to exist in the graph.
  */
 class Edge {
     
-    // TODO fields
+    private String source;
+    private String target;
+    private int weight;
     
     // Abstraction function:
-    //   TODO
+    //   Represents the weighted directed edge from source to target
     // Representation invariant:
-    //   TODO
+    //   Weight is positive
     // Safety from rep exposure:
-    //   TODO
-    
-    // TODO constructor
-    
-    // TODO checkRep
-    
-    // TODO methods
-    
-    // TODO toString()
+    //   All fields are private and all types in the rep are inmutable
+
+
+
+    /**
+     * Create a new edge object
+     * @param source vertex
+     * @param target vertex
+     * @param weight
+     */
+    public Edge(String source, String target, int weight) {
+        this.source = source;
+        this.target = target;
+        this.weight = weight;
+        checkRep();
+    }
+
+    // Check rep invariant
+    private void checkRep() {
+        assert (weight > 0) : "Invalid value of weight";
+        assert (source != null) : "sourse not exists";
+        assert (target != null) : "target not exists";
+    }
+
+
+    /**
+     * Get source of the edge
+     * @return source vertex of edge
+     */
+    public String getSource() {
+        checkRep();
+        return source;
+    }
+
+    /**
+     * Get target of the edge
+     * @return target vertex of edge
+     */
+    public String getTarget() {
+        checkRep();
+        return target;
+    }
+
+    /**
+     * Get weight of the edge
+     * @return weight of edge
+     */
+    public int getWeight() {
+        checkRep();
+        return weight;
+    }
+
+    /**
+     * Compare two edges
+     * @param other edge
+     * @return true if edges are equal
+     */
+    public boolean isSame(Edge other) {
+        boolean result = false;
+        if (source.equals(other.source) && target.equals(other.target)) {
+            result = true;
+        }
+        checkRep();
+        return result;
+    }
+
+    @Override public String toString() {
+        return "Source = " + source + " Target = " + target + " Weight = " + weight;
+    }
     
 }
