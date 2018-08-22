@@ -42,7 +42,9 @@ public class ConcreteEdgesGraph implements Graph<String> {
     private boolean isEdgeNotDuplicate() {
         if (edges.size() > 1) {
             for (int i=0; i<edges.size(); i++) {
-                for (int j=0; j<edges.size(); i++) {
+                for (int j=0; j<edges.size(); j++) {
+                    Edge temp1 = edges.get(0);
+                    Edge temp2 = edges.get(1);
                     if (i != j && edges.get(i).getSource() == edges.get(j).getSource() &&
                             edges.get(i).getTarget() == edges.get(j).getTarget()) {
                         return false;

@@ -48,6 +48,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
     private final String vertex1 = "V1";
     private final String vertex2 = "V";
     private final String vertex3 = "";
+
     private final int weight1 = 1;
     private final int weight2 = 2;
     
@@ -130,18 +131,8 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
         assertEquals(modelString, edge.toString());
     }
 
-
     /*
      * Testing strategy for ConcreteEdgesGraph class
-     *
-     * checkRep() which calls:
-     *      isEdgeNotDuplicate()
-     *      isVerticesNotNull()
-     * isEdgeInGraph()
-     * findEdge()
-     * findEdgesBySource()
-     * findEdgesByTarget()
-     *
      *
      * toString()
      *   vertices : 0, 1, n
@@ -179,16 +170,6 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
         graph.set(vertex2, vertex3, weight2);
         String modelString = "Graph contains 3 vertices and 2 edges";
         assertEquals(modelString, graph.toString());
-    }
-
-    @Test
-    public void anyTestOnGraph() {
-        ConcreteEdgesGraph graph = new ConcreteEdgesGraph();
-        graph.set(vertex1, vertex2, weight1);
-        assertTrue(graph.vertices().contains(vertex1));
-        assertTrue(graph.vertices().contains(vertex2));
-        assertEquals(graph.vertices().size(), 2);
-        graph.set(vertex2, vertex3, weight2);
     }
 
 
