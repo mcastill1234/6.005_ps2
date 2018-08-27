@@ -1,6 +1,6 @@
 /* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
  * Redistribution of original or derived work requires permission of course staff.
- * Test cases based in Dmytro Shaban... Added tests for
+ * Test cases based in Dmytro Shaban.
  */
 package graph;
 
@@ -42,7 +42,13 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
      *      2. weight =  1, n
      */
 
-
+    /*
+     * Testing strategy for ConcreteEdgesGraph class
+     *
+     * toString()
+     *   vertices : 0, 1, n
+     *   edges : 0, 1, n
+     */
 
 
     private final String vertex1 = "V1";
@@ -132,20 +138,10 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
     }
 
     /*
-     * Testing strategy for ConcreteEdgesGraph class
-     *
-     * toString()
-     *   vertices : 0, 1, n
-     *   edges : 0, 1, n
-     */
-
-
-    /*
      * Testing ConcreteEdgesGraph...
      */
-    
 
-    // cover number of vertices = 0, number of edges = 0.
+    // Covers number of vertices = 0, number of edges = 0.
     @Test
     public void testToStringEmptyGraph() {
         ConcreteEdgesGraph graph = new ConcreteEdgesGraph();
@@ -153,7 +149,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
         assertEquals(modelString, graph.toString());
     }
 
-    // cover number of vertices = 1, number of edges = 1.
+    // Covers number of vertices = 1, number of edges = 1.
     @Test
     public void testToStringOneVertexOneEdge() {
         ConcreteEdgesGraph graph = new ConcreteEdgesGraph();
@@ -162,7 +158,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
         assertEquals(modelString, graph.toString());
     }
 
-    // cover number of vertices = 3, number of edges = 2.
+    // Covers number of vertices = 3, number of edges = 2.
     @Test
     public void testToStringThreeVertexTwoEdge() {
         ConcreteEdgesGraph graph = new ConcreteEdgesGraph();

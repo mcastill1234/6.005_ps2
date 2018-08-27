@@ -1,7 +1,7 @@
 /* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
  * Redistribution of original or derived work requires permission of course staff.
- * This implementation of Graph is based on  Dmytro Shaban solution with some changes. I'm fairly new to
- * java so I'm trying out an easier program for checkRep which is much more complex than using a sorted list.
+ * This implementation of Graph is based on  Dmytro Shaban solution with some changes. I'm trying out an easier
+ * program for checkRep which is much more complex than using a sorted list.
  * I also propose set() without exceptions for notFound edge and some variations in the code.
  */
 package graph;
@@ -29,14 +29,13 @@ public class ConcreteEdgesGraph implements Graph<String> {
     
     // Check rep invariant
     private void checkRep() {
-        assert(this.isEdgeNotDuplicate());
-        assert(this.isVerticesNotNull());
+        assert(this.isEdgeNotDuplicate()) : "Edges are duplicate";
+        assert(this.isVerticesNotNull()) : "Some vertex is null";
     }
-
 
     /**
      * Check that edges are not duplicate
-     * Using nested loops - O(n^2)
+     * Using nested loops - O(n^2).
      * @return true if edges are not duplicate
      */
     private boolean isEdgeNotDuplicate() {
@@ -66,7 +65,8 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return true;
     }
     
-    @Override public boolean add(String vertex) {
+    @Override
+    public boolean add(String vertex) {
         boolean result = false;
         if (!vertices.contains(vertex)) {
             vertices.add(vertex);
@@ -76,7 +76,8 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return result;
     }
     
-    @Override public int set(String source, String target, int weight) {
+    @Override
+    public int set(String source, String target, int weight) {
         if (weight == 0) {
             if (isEdgeInGraph(source, target)) {
                 Edge edgeToSet = findEdge(source, target);
@@ -139,7 +140,8 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return new Edge("", "", 0);
     }
 
-    @Override public boolean remove(String vertex) {
+    @Override
+    public boolean remove(String vertex) {
         boolean result = false;
         if (vertices.contains(vertex)) {
             vertices.remove(vertex);
@@ -183,32 +185,38 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return result;
     }
     
-    @Override public Set<String> vertices() {
+    @Override
+    public Set<String> vertices() {
         checkRep();
         return new HashSet<>(vertices);
     }
     
-    @Override public Map<String, Integer> sources(String target) {
+    @Override
+    public Map<String, Integer> sources(String target) {
         Map<String, Integer> result = new HashMap<>();
         for (Edge edge : edges) {
             if (edge.getTarget().equals(target)) {
                 result.put(edge.getSource(), edge.getWeight());
             }
         }
+        checkRep();
         return result;
     }
     
-    @Override public Map<String, Integer> targets(String source) {
+    @Override
+    public Map<String, Integer> targets(String source) {
         Map<String, Integer> result = new HashMap<>();
         for (Edge edge : edges) {
             if (edge.getSource().equals(source)) {
                 result.put(edge.getTarget(), edge.getWeight());
             }
         }
+        checkRep();
         return result;
     }
     
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Graph contains " + vertices.size() + " vertices and " + edges.size() + " edges";
     }
     
@@ -234,7 +242,7 @@ class Edge {
     // Representation invariant:
     //   Weight is positive
     // Safety from rep exposure:
-    //   All fields are private and all types in the rep are inmutable
+    //   All fields are private and all types in the rep are immutable
 
 
 
@@ -300,7 +308,8 @@ class Edge {
         return result;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Source = " + source + " Target = " + target + " Weight = " + weight;
     }
     
