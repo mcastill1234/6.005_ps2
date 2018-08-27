@@ -25,22 +25,6 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     }
     
     /*
-     * Testing Strategy for ConcreteVerticesGraph
-     *
-     *
-     * toString()
-     *   Test with empty graph, 1 Vertex in Graph, N Vertices in Graph
-     *
-     *
-     */
-    
-
-    
-    // TODO tests for ConcreteVerticesGraph.toString()
-
-
-
-    /*
      * Testing Strategy for Vertex
      *
      * Vertex()
@@ -75,6 +59,14 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
      *
      */
 
+    /*
+     * Testing Strategy for ConcreteVerticesGraph
+     *
+     * toString()
+     *   Test with empty graph, 1 Vertex in Graph, N Vertices in Graph
+     *   Test with no edges, 1 edge, N, edges
+     */
+
 
     private final String vertex1 = "V1";
     private final String vertex2 = "V2";
@@ -88,6 +80,11 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     private final int weight1 = 1;
     private final int weight2 = 2;
     private final int weight3 = 3;
+
+
+    /*
+     * Testing Vertex...
+     */
 
 
     // Covers construct Vertex with different string sizes
@@ -145,6 +142,37 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
         Vertex testVertex1 = new Vertex(vertex1);
         String testString = "Vertex = V1 has 0 targets";
         assertEquals(testString, testVertex1.toString());
+    }
+
+    /*
+     * Testing ConcreteVerticesGraph
+     */
+
+    // Covers number of vertices = 0, number of edges = 0.
+    @Test
+    public void testToStringEmptyGraph() {
+        ConcreteVerticesGraph graph = new ConcreteVerticesGraph();
+        String testString = "Graph contains 0 vertices and 0 edges";
+        assertEquals(testString, graph.toString());
+    }
+
+    // Covers number of vertices = 1, number of edges = 1.
+    @Test
+    public void testToStringOneVertexOneEdge() {
+        ConcreteVerticesGraph graph = new ConcreteVerticesGraph();
+        graph.set(vertex1, vertex1, weight1);
+        String testString = "Graph contains 1 vertices and 1 edges";
+        assertEquals(testString, graph.toString());
+    }
+
+    // Covers number of vertices = 3, number of edges = 2.
+    @Test
+    public void testToStringThreeVertexTwoEdge() {
+        ConcreteVerticesGraph graph = new ConcreteVerticesGraph();
+        graph.set(vertex1, vertex2, weight1);
+        graph.set(vertex2, vertex3, weight2);
+        String testString = "Graph contains 3 vertices and 2 edges";
+        assertEquals(testString, graph.toString());
     }
     
 }
